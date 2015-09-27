@@ -285,12 +285,6 @@
                "staticSubnetRef":{
                   "value":"[variables('staticSubnetRef')]"
                },
-               "adBEAddressPoolID":{
-                  "value":"[variables('derivedIds').adBEAddressPoolID]"
-               },
-               "adRDPNATRuleID":{
-                  "value":"[variables('derivedIds').adRDPNATRuleID]"
-               },
                "adBDCNicName":{
                   "value":"[variables('adBDCNicName')]"
                },
