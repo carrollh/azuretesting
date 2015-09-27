@@ -149,11 +149,11 @@
       "configuration":{
          "vnetwithDNSTemplateURL":"[concat(parameters('baseUrl'),'/vnet-with-dns-server.json')]",
          "nicTemplateURL":"[concat(parameters('baseUrl'),'/nic.json')]",
-         "adPDCModulesURL":"[concat(variables('assetLocation'),'/CreateADPDC.ps1.zip')]",
+         "adPDCModulesURL":"[concat(parameters('baseURL'),'/dsc/CreateADPDC.ps1.zip')]",
          "adPDCConfigurationFunction":"CreateADPDC.ps1\\CreateADPDC",
-         "adBDCModulesURL":"[concat(variables('assetLocation'),'/CreateADBDC.ps1.zip')]",
+         "adBDCModulesURL":"[concat(parameters('baseURL'),'/dsc/CreateADBDC.ps1.zip')]",
          "adBDCConfigurationFunction":"CreateADBDC.ps1\\CreateADBDC",
-         "createClusterModulesURL":"[concat(variables('assetLocation'),'/CreateFailoverCluster.ps1.zip')]",
+         "createClusterModulesURL":"[concat(parameters('baseURL'),'/dsc/CreateFailoverCluster.ps1.zip')]",
          "createClusterConfigurationFunction":"CreateFailoverCluster.ps1\\CreateFailoverCluster",
          "rdpIPAdressSetupURL":"[concat(parameters('baseUrl'),'/publicip-rdp.json')]",
          "availabilitySetSetupURL":"[concat(parameters('baseUrl'),'/availabilitySets.json')]",
@@ -162,8 +162,7 @@
          "creatingStorageAccounts":"[concat(parameters('baseUrl'),'/creatingStorageAccounts.json')]",
          "vnetSetupURL":"[concat(parameters('baseUrl'),'/vnet-new.json')]",
          "creatingNicsUrl":"[concat(parameters('baseUrl'),'/creatingNICS.json')]"
-      },
-      "assetLocation":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/sharepoint-server-farm-ha/dsc"
+      }
    },
    "resources":[
       {
