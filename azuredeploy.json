@@ -184,6 +184,7 @@
       "derivedIds":{
         "adIPConfigID": "[concat(variables('ids').adNicId,'/ipConfigurations/ipconfig1')]",
         "rdplbFEConfigID":"[concat(variables('ids').rdplbID,'/frontendIPConfigurations/',variables('lbSettings').rdpLBFE)]",
+		"adRDPNATRuleID":"[concat(variables('ids').rdplbID,'/inboundNatRules/',variables('RDPNAT'))]",
 		"adBEAddressPoolID":"[concat(variables('ids').rdplbID,'/backendAddressPools/',variables('lbSettings').adLBBE)]"
       },
       "subnets":[
