@@ -50,12 +50,6 @@
 						}
 					}
 				],
-				"backendAddressPools": [
-					{
-						"name": "[parameters('adLBBE')]"
-
-					}
-				],
 				"inboundNatRules": [
 					{
 						"name": "[parameters('RDPNAT')]",
