@@ -59,7 +59,7 @@
           "id": "[parameters('availabilitySet')]"
         },
         "osProfile": {
-          "computername": "[concat(parameters('siosVMName'), copyindex())]",
+          "computerName": "[concat(parameters('siosVMName'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -77,7 +77,8 @@
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          },
+          }
+		},
         "networkProfile": {
           "networkInterfaces": [
             {
