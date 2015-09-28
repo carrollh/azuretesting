@@ -14,6 +14,9 @@
     "rdpLBFE" : {
       "type": "string"
     },
+    "adLBBE" : {
+      "type": "string"
+    },
     "RDPNAT" : {
       "type" : "string"
     },
@@ -48,6 +51,12 @@
 								"id": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('rdpIPAddressName'))]"
 							}
 						}
+					}
+				],
+				"backendAddressPools": [
+					{
+						"name": "[parameters('adLBBE')]"
+
 					}
 				],
 				"inboundNatRules": [

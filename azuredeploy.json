@@ -49,6 +49,32 @@
             "description":"The size of the AD VMs Created"
          }
       },
+      "siosVMSize":{
+         "type":"string",
+         "defaultValue": "Standard_A1",
+         "allowedValues":[
+			"Standard_A1",
+            "Standard_D1",
+            "Standard_DS1",
+            "Standard_D2",
+            "Standard_DS2",
+            "Standard_D3",
+            "Standard_DS3",
+            "Standard_D4",
+            "Standard_DS4",
+            "Standard_D11",
+            "Standard_DS11",
+            "Standard_D12",
+            "Standard_DS12",
+            "Standard_D13",
+            "Standard_DS13",
+            "Standard_D14",
+            "Standard_DS14"
+         ],
+         "metadata":{
+            "description":"The size of the Sios VMs Created"
+         }
+      },
       "domainName":{
          "type":"string",
 		 "defaultValue": "sios.datakeeper.local",
@@ -84,6 +110,13 @@
          },
          "defaultValue":"10.0.0.0/24"
       },
+      "siosSubnet":{
+         "type":"string",
+         "metadata":{
+            "description":"The address range of the Sios subnet created in the new VNET"
+         },
+         "defaultValue":"10.0.1.0/24"
+      },
       "adPDCNICIPAddress":{
          "type":"string",
          "metadata":{
@@ -110,23 +143,30 @@
    "variables":{
 	  "lbSettings":{
          "rdpLBFE":"rdpLBFE",
+		 "adLBBE":"adLBBE",
 		 "rdpLBName":"rdpLoadBalancer"
 	  },
       "subnetNames":{
-         "staticSubnetName":"staticSubnet"
+         "staticSubnetName":"staticSubnet",
+		 "siosSubnetName":"siosSubnet"
       },
       "RDPNAT":"RDP",
       "rdpIPAddressName":"rdpIP",
 	  "vmSettings": {
 		  "availabilitySets": {
+			"siosAvailabilitySetName":"siosAvailabilitySet",
 			"adAvailabilitySetName": "adAvailabilitySet"
           },
 		  "vmContainerName": "vhds",
 		  "adPDCVMName": "ad-pdc",
 		  "adBDCVMName": "ad-bdc",
+		  "siosVMName":"sios-",
 		  "windowsImagePublisher": "MicrosoftWindowsServer",
 		  "windowsImageOffer": "WindowsServer",
 		  "windowsImageSKU": "2012-R2-Datacenter",
+		  "siosImagePublisher":"sios-datakeeper",
+          "siosImageOffer":"sios-datakeeper-8",
+          "siosImageSKU":"bring_your_own_license",
 		  "rdpPort": 3389,
 		  "windowsDiskSize": 128
 	  },
@@ -136,19 +176,27 @@
       "adBDCNicName":"[concat(variables('vmSettings').adBDCVMName,'-nic')]",
       "VnetID":"[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
       "staticSubnetRef":"[concat(variables('VnetID'),'/subnets/',variables('subnetNames').staticSubnetName)]",
+	  "siosSubnetRef":"[concat(variables('VnetID'),'/subnets/',variables('subnetNames').siosSubnetName)]",
       "ids":{
          "adNicId":"[resourceId('Microsoft.Network/networkInterfaces',variables('adPDCNicName'))]",
 		 "rdplbID":"[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').rdpLBName)]"
       },
       "derivedIds":{
         "adIPConfigID": "[concat(variables('ids').adNicId,'/ipConfigurations/ipconfig1')]",
-        "rdplbFEConfigID":"[concat(variables('ids').rdplbID,'/frontendIPConfigurations/',variables('lbSettings').rdpLBFE)]"
+        "rdplbFEConfigID":"[concat(variables('ids').rdplbID,'/frontendIPConfigurations/',variables('lbSettings').rdpLBFE)]",
+		"adBEAddressPoolID":"[concat(variables('ids').rdplbID,'/backendAddressPools/',variables('lbSettings').adLBBE)]"
       },
       "subnets":[
          {
             "name":"[variables('subnetNames').staticSubnetName]",
             "properties":{
                "addressPrefix":"[parameters('staticSubnet')]"
+            }
+         },
+         {
+            "name":"[variables('subnetNames').siosSubnetName]",
+            "properties":{
+               "addressPrefix":"[parameters('siosSubnet')]"
             }
          }
       ],
@@ -166,6 +214,7 @@
          "provisioningPrimaryDCURL":"[concat(parameters('baseUrl'),'/provisioningPrimaryDomainController.json')]",
          "provisioningBackupDCURL":"[concat(parameters('baseUrl'),'/provisioningBackupDomainController.json')]",
          "creatingStorageAccounts":"[concat(parameters('baseUrl'),'/creatingStorageAccounts.json')]",
+		 "creatingSiosVMsURL":"[concat(parameters('baseUrl'),'/creatingSiosVMs.json')]",
          "vnetSetupURL":"[concat(parameters('baseUrl'),'/vnet-new.json')]",
          "creatingNicsUrl":"[concat(parameters('baseUrl'),'/creatingNICS.json')]"
       }
@@ -217,6 +266,9 @@
                "rdpLBFE":{
                   "value":"[variables('lbSettings').rdpLBFE]"
                },
+			   "adLBBE":{
+                  "value":"[variables('lbSettings').adLBBE]"
+               },
                "RDPNAT":{
                   "value":"[variables('RDPNAT')]"
                },
@@ -242,6 +294,9 @@
                },
                "adAvailabilitySetName":{
                   "value":"[variables('vmSettings').availabilitySets.adAvailabilitySetName]"
+               },
+               "siosAvailabilitySetName":{
+                  "value":"[variables('vmSettings').availabilitySets.siosAvailabilitySetName]"
                }
             }
          }
@@ -299,11 +354,23 @@
                "staticSubnetRef":{
                   "value":"[variables('staticSubnetRef')]"
                },
+			   "adBEAddressPoolID":{
+                  "value":"[variables('derivedIds').adBEAddressPoolID]"
+               },
+               "adRDPNATRuleID":{
+                  "value":"[variables('derivedIds').adRDPNATRuleID]"
+               },
                "adBDCNicName":{
                   "value":"[variables('adBDCNicName')]"
                },
                "adBDCNICIPAddress":{
                   "value":"[parameters('adBDCNICIPAddress')]"
+               },
+               "siosVMName":{
+                  "value":"[variables('vmSettings').siosVMName]"
+               },
+               "siosSubnetRef":{
+                  "value":"[variables('siosSubnetRef')]"
                }
             }
          }
@@ -503,6 +570,59 @@
                      "[parameters('adPDCNICIPAddress')]",
                      "[parameters('adBDCNICIPAddress')]"
                   ]
+               }
+            }
+         }
+      },
+      {
+         "name":"CreatingSiosVirtualMachines",
+         "type":"Microsoft.Resources/deployments",
+         "apiVersion":"2015-01-01",
+         "dependsOn":[
+            "Microsoft.Resources/deployments/CreatingStorageAccounts",
+            "Microsoft.Resources/deployments/CreatingNetworkInterfaces",
+            "Microsoft.Resources/deployments/CreatingAvailabilitySets",
+            "Microsoft.Resources/deployments/UpdatingDNStoPrimaryADVM"
+         ],
+         "properties":{
+            "mode":"Incremental",
+            "templateLink":{
+               "uri":"[variables('configuration').creatingSiosVMsURL]",
+               "contentVersion":"1.0.0.0"
+            },
+            "parameters":{
+               "siosVMName":{
+                  "value":"[variables('vmSettings').siosVMName]"
+               },
+               "location":{
+                  "value":"[parameters('location')]"
+               },
+               "storageAccountNamePrefix":{
+                  "value":"[parameters('storageAccountNamePrefix')]"
+               },
+               "availabilitySet":{
+                  "value":"[reference('CreatingAvailabilitySets').outputs.siosAvailabilitySetName.value]"
+               },
+               "siosVMSize":{
+                  "value":"[parameters('siosVMSize')]"
+               },
+               "adminUsername":{
+                  "value":"[parameters('adminUsername')]"
+               },
+               "adminPassword":{
+                  "value":"[parameters('adminPassword')]"
+               },
+               "vmContainerName":{
+                  "value":"[variables('vmSettings').vmContainerName]"
+               },
+               "siosImagePublisher":{
+                  "value":"[variables('vmSettings').siosImagePublisher]"
+               },
+               "siosImageOffer":{
+                  "value":"[variables('vmSettings').siosImageOffer]"
+               },
+               "siosImageSKU":{
+                  "value":"[variables('vmSettings').siosImageSKU]"
                }
             }
          }
