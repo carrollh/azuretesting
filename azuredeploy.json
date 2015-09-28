@@ -162,8 +162,6 @@
 		  "windowsImagePublisher": "MicrosoftWindowsServer",
 		  "windowsImageOffer": "WindowsServer",
 		  "windowsImageSKU": "2012-R2-Datacenter",
-      "siosImagePublisher": "sios_datakeeper",
-      "siosImageOffer":"sios-datakeeper-8",
 		  "rdpPort": 3389,
 		  "windowsDiskSize": 128
 	  },
@@ -612,12 +610,6 @@
                },
                "vmContainerName":{
                   "value":"[variables('vmSettings').vmContainerName]"
-               },
-               "siosImagePublisher":{
-                  "value":"[variables('vmSettings').siosImagePublisher]"
-               },
-               "siosImageOffer":{
-                  "value":"[variables('vmSettings').siosImageOffer]"
                }
             }
          }

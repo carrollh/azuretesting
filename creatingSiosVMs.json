@@ -25,12 +25,6 @@
     },
     "vmContainerName" : {
       "type" : "string"
-    },
-    "siosImagePublisher" : {
-      "type" : "string"
-    },
-    "siosImageOffer" : {
-      "type" : "string"
     }
   },
   "resources": [
@@ -45,8 +39,8 @@
       },
 	  "plan": {
         "name": "bring_your_own_license",
-        "publisher": "[variables('siosImagePublisher')]",
-        "product": "[variables('siosImageOffer')]"
+        "publisher": "sios_datakeeper",
+        "product": "sios-datakeeper-8"
       },
       "properties": {
         "hardwareProfile": {
@@ -62,8 +56,8 @@
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "[parameters('siosImagePublisher')]",
-            "offer": "[parameters('siosImageOffer')]",
+            "publisher": "sios_datakeeper",
+            "offer": "sios-datakeeper-8",
             "sku": "bring_your_own_license",
             "version": "latest"
           },
