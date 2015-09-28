@@ -4,7 +4,7 @@
    "parameters":{
       "location":{
          "type":"string",
-		 "defaultValue": "East US",
+		 "defaultValue": "West US",
          "metadata":{
             "description":"The region to deploy the resources into"
          }
@@ -25,9 +25,8 @@
       },
       "adVMSize":{
          "type":"string",
-		 "defaultValue": "Standard_A1",
+		 "defaultValue":"Standard_DS1",
          "allowedValues":[
-			"Standard_A1",
             "Standard_D1",
             "Standard_DS1",
             "Standard_D2",
@@ -51,9 +50,8 @@
       },
       "siosVMSize":{
          "type":"string",
-         "defaultValue": "Standard_A1",
+         "defaultValue":"Standard_DS1",
          "allowedValues":[
-			"Standard_A1",
             "Standard_D1",
             "Standard_DS1",
             "Standard_D2",
@@ -91,7 +89,7 @@
       },
       "storageAccountType":{
          "type":"string",
-		 "defaultValue": "Standard_LRS",
+		 "defaultValue": "Premium_LRS",
          "metadata":{
             "description":"The type of the Storage Account created"
          }
@@ -164,7 +162,7 @@
 		  "windowsImagePublisher": "MicrosoftWindowsServer",
 		  "windowsImageOffer": "WindowsServer",
 		  "windowsImageSKU": "2012-R2-Datacenter",
-		  "siosImagePublisher":"sios-datakeeper",
+		  "siosImagePublisher":"sios_datakeeper",
           "siosImageOffer":"sios-datakeeper-8",
           "siosImageSKU":"bring_your_own_license",
 		  "rdpPort": 3389,

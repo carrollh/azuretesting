@@ -46,6 +46,11 @@
         "name": "siosVirtualMachineLoop",
         "count": 2
       },
+	  "plan": {
+        "name": "[variables('siosImageSKU')]",
+        "publisher": "[variables('siosImagePublisher')]",
+        "product": "[variables('siosImageOffer')]"
+      },
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('siosVMSize')]"
@@ -73,29 +78,6 @@
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
-          "dataDisks": [
-            {
-              "vhd": {
-                "uri":"[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',parameters('vmContainerName'),'/', parameters('siosVMName'), copyindex(), '-Data-1.vhd')]"
-              },
-              "name":"[concat(parameters('siosVMName'), copyindex(),'-data-disk1')]",
-              "caching" : "None",
-              "createOption": "empty",
-              "diskSizeGB": 1000,
-              "lun": 0
-            },
-            {
-              "vhd": {
-                "uri":"[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',parameters('vmContainerName'),'/', parameters('siosVMName'), copyindex(), '-log.vhd')]"
-              },
-              "name":"[concat(parameters('siosVMName'), copyindex(),'-log-disk1')]",
-              "caching" : "None",
-              "createOption": "empty",
-              "diskSizeGB": 1000,
-              "lun": 1
-            }
-          ]
-        },
         "networkProfile": {
           "networkInterfaces": [
             {
