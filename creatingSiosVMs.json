@@ -31,23 +31,20 @@
     },
     "siosImageOffer" : {
       "type" : "string"
-    },
-    "siosImageSKU" : {
-      "type" : "string"
     }
   },
   "resources": [
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('siosVMName'), copyindex())]",
+      "name": "[concat(parameters('siosVMName'), copyIndex())]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "siosVirtualMachineLoop",
         "count": 2
       },
 	  "plan": {
-        "name": "[variables('siosImageSKU')]",
+        "name": "bring_your_own_license",
         "publisher": "[variables('siosImagePublisher')]",
         "product": "[variables('siosImageOffer')]"
       },
@@ -59,7 +56,7 @@
           "id": "[parameters('availabilitySet')]"
         },
         "osProfile": {
-          "computerName": "[concat(parameters('siosVMName'), copyindex())]",
+          "computerName": "[concat(parameters('siosVMName'), copyIndex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -67,7 +64,7 @@
           "imageReference": {
             "publisher": "[parameters('siosImagePublisher')]",
             "offer": "[parameters('siosImageOffer')]",
-            "sku": "[parameters('siosImageSKU')]",
+            "sku": "bring_your_own_license",
             "version": "latest"
           },
           "osDisk": {

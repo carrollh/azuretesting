@@ -81,11 +81,11 @@
          }
       },
       "storageAccountNamePrefix":{
-         "type":"string",
-		 "defaultValue": "heathtest9",
-         "metadata":{
-            "description":"The prefix of the new storage account created to store the VMs disks, different storage accounts will be created for AD and DataKeeper VMs"
-         }
+        "type": "string",
+        "defaultValue": "heathtest9",
+        "metadata":{
+          "description":"The prefix of the new storage account created to store the VMs disks, different storage accounts will be created for AD and DataKeeper VMs"
+        }
       },
       "storageAccountType":{
          "type":"string",
@@ -162,9 +162,8 @@
 		  "windowsImagePublisher": "MicrosoftWindowsServer",
 		  "windowsImageOffer": "WindowsServer",
 		  "windowsImageSKU": "2012-R2-Datacenter",
-		  "siosImagePublisher":"sios_datakeeper",
-          "siosImageOffer":"sios-datakeeper-8",
-          "siosImageSKU":"bring_your_own_license",
+      "siosImagePublisher": "sios_datakeeper",
+      "siosImageOffer":"sios-datakeeper-8",
 		  "rdpPort": 3389,
 		  "windowsDiskSize": 128
 	  },
@@ -619,9 +618,6 @@
                },
                "siosImageOffer":{
                   "value":"[variables('vmSettings').siosImageOffer]"
-               },
-               "siosImageSKU":{
-                  "value":"[variables('vmSettings').siosImageSKU]"
                }
             }
          }
