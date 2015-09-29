@@ -77,7 +77,7 @@
               "name":"[concat(parameters('siosVMName'), copyindex(),'-data-disk1')]",
               "caching" : "None",
               "createOption": "empty",
-              "diskSizeGB": "100",
+              "diskSizeGB": 100,
               "lun": 0
             }
           ]
