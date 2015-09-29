@@ -227,6 +227,15 @@
                },
                "siosVMName":{
                   "value":"[variables('vmSettings').siosVMName]"
+               },
+               "pdcRdpIPAddressName":{
+                  "value":"[variables('pdcRdpIPAddressName')]"
+               },
+               "bdcRdpIPAddressName":{
+                  "value":"[variables('bdcRdpIPAddressName')]"
+               },
+               "siosVMRdpIPAddressNamePrefix":{
+                  "value":"sios-"
                }
             }
          }
