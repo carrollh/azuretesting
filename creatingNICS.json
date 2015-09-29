@@ -14,12 +14,6 @@
     "staticSubnetRef": {
       "type": "string"
     },
-    "adBEAddressPoolID": {
-      "type": "string"
-    },
-    "adRDPNATRuleID": {
-      "type": "string"
-    },
     "adBDCNicName": {
       "type": "string"
     },
@@ -31,96 +25,86 @@
     }
   },
   "resources": [
-  {
-    "name": "[parameters('adPDCNicName')]",
-    "type": "Microsoft.Network/networkInterfaces",
-    "location": "[parameters('location')]",
-    "apiVersion": "2015-06-15",
-    "properties": {
-      "ipConfigurations": [
-        {
-          "name": "ipconfig1",
-          "properties": {
-            "privateIPAllocationMethod": "Static",
-            "privateIPAddress" :"[parameters('adPDCNICIPAddress')]",
-            "subnet": {
-              "id": "[parameters('staticSubnetRef')]"
-            },
-            "loadBalancerBackendAddressPools": [
-              {
-                "id":"[parameters('adBEAddressPoolID')]"
+    {
+      "name": "[parameters('adPDCNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-06-15",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('adPDCNICIPAddress')]",
+              "subnet": {
+                "id": "[parameters('staticSubnetRef')]"
               }
-            ],
-            "loadBalancerInboundNatRules": [
-              {
-                "id": "[parameters('adRDPNATRuleID')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('adBDCNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-06-15",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress" :"[parameters('adBDCNICIPAddress')]",
+              "subnet": {
+                "id": "[parameters('staticSubnetRef')]"
               }
-            ]
-          }
-        }
-      ]
-    }
-  },
-  {
-    "name": "[parameters('adBDCNicName')]",
-    "type": "Microsoft.Network/networkInterfaces",
-    "location": "[parameters('location')]",
-    "apiVersion": "2015-06-15",
-    "properties": {
-      "ipConfigurations": [
-        {
-          "name": "ipconfig1",
-          "properties": {
-            "privateIPAllocationMethod": "Static",
-            "privateIPAddress" :"[parameters('adBDCNICIPAddress')]",
-            "subnet": {
-              "id": "[parameters('staticSubnetRef')]"
             }
           }
-        }
-      ]
-    }
-  },
-  {
-    "name": "[concat(parameters('siosVMName'), '0-nic')]",
-    "type": "Microsoft.Network/networkInterfaces",
-    "location": "[parameters('location')]",
-    "apiVersion": "2015-06-15",
-    "properties": {
-      "ipConfigurations": [
-        {
-          "name": "ipconfig1",
-          "properties": {
-            "privateIPAllocationMethod": "Static",
-            "privateIPAddress" :"10.0.0.6",
-            "subnet": {
-              "id": "[parameters('staticSubnetRef')]"
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('siosVMName'), '0-nic')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-06-15",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress" :"10.0.0.6",
+              "subnet": {
+                "id": "[parameters('staticSubnetRef')]"
+              }
             }
           }
-        }
-      ]
-    }
-  },
-  {
-    "name": "[concat(parameters('siosVMName'), '1-nic')]",
-    "type": "Microsoft.Network/networkInterfaces",
-    "location": "[parameters('location')]",
-    "apiVersion": "2015-06-15",
-    "properties": {
-      "ipConfigurations": [
-        {
-          "name": "ipconfig1",
-          "properties": {
-            "privateIPAllocationMethod": "Static",
-            "privateIPAddress" :"10.0.0.7",
-            "subnet": {
-              "id": "[parameters('staticSubnetRef')]"
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('siosVMName'), '1-nic')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-06-15",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress" :"10.0.0.7",
+              "subnet": {
+                "id": "[parameters('staticSubnetRef')]"
+              }
             }
           }
-        }
-      ]
+        ]
+      }
     }
-  }
-],
+  ],
 "outputs": {}
 }

@@ -5,81 +5,70 @@
     "location": {
       "type": "string"
     },
-    "rdpIPAddressName": {
+    "pdcRdpIPAddressName": {
       "type": "string"
     },
-    "rdpLBName": {
+    "bdcRdpIPAddressName": {
       "type": "string"
     },
-    "rdpLBFE" : {
+    "siosVMRdpIPAddressNamePrefix": {
       "type": "string"
-    },
-    "adLBBE" : {
-      "type": "string"
-    },
-    "RDPNAT" : {
-      "type" : "string"
-    },
-    "rdplbFEConfigID" : {
-      "type" : "string"
     }
   },
   "resources": [
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[parameters('rdpIPAddressName')]",
+      "name": "[parameters('pdcRdpIPAddressName')]",
       "location": "[parameters('location')]",
       "properties": {
         "publicIPAllocationMethod": "dynamic"
       }
     },
     {
-			"apiVersion": "2015-06-15",
-			"name": "[parameters('rdpLBName')]",
-			"type": "Microsoft.Network/loadBalancers",
-			"location": "[parameters('location')]",
-			"dependsOn": [
-				"[resourceId('Microsoft.Network/publicIPAddresses',parameters('rdpIPAddressName'))]"
-			],
-			"properties": {
-				"frontendIPConfigurations": [
-					{
-						"name": "[parameters('rdpLBFE')]",
-						"properties": {
-							"publicIPAddress": {
-								"id": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('rdpIPAddressName'))]"
-							}
-						}
-					}
-				],
-				"backendAddressPools": [
-					{
-						"name": "[parameters('adLBBE')]"
-
-					}
-				],
-				"inboundNatRules": [
-					{
-						"name": "[parameters('RDPNAT')]",
-						"properties": {
-							"frontendIPConfiguration": {
-								"id": "[parameters('rdplbFEConfigID')]"
-							},
-							"protocol": "tcp",
-							"frontendPort": 3389,
-							"backendPort": 3389,
-							"enableFloatingIP": false
-						}
-					}
-				]
-			}
-		}
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[parameters('bdcRdpIPAddressName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "publicIPAllocationMethod": "dynamic"
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(parameters('siosVMRdpIPAddressNamePrefix'), '0')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "publicIPAllocationMethod": "dynamic"
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(parameters('siosVMRdpIPAddressNamePrefix'), '1')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "publicIPAllocationMethod": "dynamic"
+      }
+    }
   ],
   "outputs": {
-    "resourceId": {
+    "pdcRdpPublicIP": {
       "type": "string",
-      "value": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('rdpIPAddressName'))]"
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('pdcRdpIPAddressName'))]"
+    },
+    "bdcRdpPublicIP": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('bdcRdpIPAddressName'))]"
+    },
+    "siosVM0RdpPublicIP": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('siosVMRdpIPAddressNamePrefix'), '0'))]"
+    },
+    "siosVM1RdpPublicIP": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('siosVMRdpIPAddressNamePrefix'), '1'))]"
     }
   }
 }

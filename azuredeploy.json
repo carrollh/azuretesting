@@ -1,199 +1,98 @@
 {
-   "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-   "contentVersion":"1.0.0.0",
-   "parameters":{
-      "adminUsername":{
-         "type":"string",
-		 "defaultValue": "siosadmin",
-         "metadata":{
-            "description":"The name of the Administrator of the new VMs and Domain"
-         }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccountNamePrefix": {
+      "type": "string",
+      "defaultValue": "heathtest9",
+      "metadata": {
+        "description": "The prefix of the new storage account created to store the VMs disks, different storage accounts will be created for AD and DataKeeper VMs"
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "siosadmin",
+      "metadata": {
+        "description": "The name of the Administrator of the new VMs and Domain"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "defaultValue": "SIOS!5105",
+      "metadata": {
+        "description": "The password for the Administrator account of the new VMs and Domain"
+      }
+    }
+  },
+  "variables": {
+    "location": "[resourceGroup().location]",
+    "adVMSize": "Standard_DS1",
+    "siosVMSize": "Standard_DS1",
+    "domainName": "datakeeper.local",
+    "storageAccountType": "Premium_LRS",
+    "pdcRdpIPAddressName": "pdcRdpIP",
+    "bdcRdpIPAddressName": "bdcRdpIP",
+    "virtualNetworkAddressRange": "10.0.0.0/16",
+    "staticSubnet": "10.0.0.0/24",
+    "adPDCNICIPAddress": "10.0.0.4",
+    "adBDCNICIPAddress": "10.0.0.5",
+    "baseUrl": "https://raw.githubusercontent.com/carrollh/azuretesting/master",
+    "subnetNames": {
+      "staticSubnetName": "staticSubnet"
+    },
+    "vmSettings": {
+      "availabilitySets": {
+        "siosAvailabilitySetName": "siosAvailabilitySet",
+        "adAvailabilitySetName": "adAvailabilitySet"
       },
-      "adminPassword":{
-         "type":"securestring",
-		 "defaultValue": "SIOS!5105",
-         "metadata":{
-            "description":"The password for the Administrator account of the new VMs and Domain"
-         }
-      },
-      "adVMSize":{
-         "type":"string",
-		 "defaultValue":"Standard_DS1",
-         "allowedValues":[
-            "Standard_D1",
-            "Standard_DS1",
-            "Standard_D2",
-            "Standard_DS2",
-            "Standard_D3",
-            "Standard_DS3",
-            "Standard_D4",
-            "Standard_DS4",
-            "Standard_D11",
-            "Standard_DS11",
-            "Standard_D12",
-            "Standard_DS12",
-            "Standard_D13",
-            "Standard_DS13",
-            "Standard_D14",
-            "Standard_DS14"
-         ],
-         "metadata":{
-            "description":"The size of the AD VMs Created"
-         }
-      },
-      "siosVMSize":{
-         "type":"string",
-         "defaultValue":"Standard_DS1",
-         "allowedValues":[
-            "Standard_D1",
-            "Standard_DS1",
-            "Standard_D2",
-            "Standard_DS2",
-            "Standard_D3",
-            "Standard_DS3",
-            "Standard_D4",
-            "Standard_DS4",
-            "Standard_D11",
-            "Standard_DS11",
-            "Standard_D12",
-            "Standard_DS12",
-            "Standard_D13",
-            "Standard_DS13",
-            "Standard_D14",
-            "Standard_DS14"
-         ],
-         "metadata":{
-            "description":"The size of the Sios VMs Created"
-         }
-      },
-      "domainName":{
-         "type":"string",
-		 "defaultValue": "sios.datakeeper.local",
-         "metadata":{
-            "description":"The FQDN of the AD Domain created "
-         }
-      },
-      "storageAccountNamePrefix":{
-        "type": "string",
-        "defaultValue": "heathtest9",
-        "metadata":{
-          "description":"The prefix of the new storage account created to store the VMs disks, different storage accounts will be created for AD and DataKeeper VMs"
+      "vmContainerName": "vhds",
+      "adPDCVMName": "ad-pdc",
+      "adBDCVMName": "ad-bdc",
+      "siosVMName": "sios-",
+      "windowsImagePublisher": "MicrosoftWindowsServer",
+      "windowsImageOffer": "WindowsServer",
+      "windowsImageSKU": "2012-R2-Datacenter",
+      "windowsDiskSize": 128
+    },
+    "virtualNetworkName": "datakeeperVNET",
+    "clusterName": "[concat(variables('domainName'),'-fc')]",
+    "adPDCNicName": "[concat(variables('vmSettings').adPDCVMName,'-nic')]",
+    "adBDCNicName": "[concat(variables('vmSettings').adBDCVMName,'-nic')]",
+    "VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+    "staticSubnetRef": "[concat(variables('VnetID'),'/subnets/',variables('subnetNames').staticSubnetName)]",
+    "ids": {
+      "adNicId": "[resourceId('Microsoft.Network/networkInterfaces',variables('adPDCNicName'))]"
+    },
+    "derivedIds": {
+      "adIPConfigID": "[concat(variables('ids').adNicId,'/ipConfigurations/ipconfig1')]"
+    },
+    "subnets": [
+      {
+        "name": "[variables('subnetNames').staticSubnetName]",
+        "properties": {
+          "addressPrefix": "[variables('staticSubnet')]"
         }
-      },
-      "storageAccountType":{
-         "type":"string",
-		 "defaultValue": "Premium_LRS",
-         "metadata":{
-            "description":"The type of the Storage Account created"
-         }
-      },
-      "virtualNetworkAddressRange":{
-         "type":"string",
-         "metadata":{
-            "description":"The address range of the new VNET in CIDR format"
-         },
-         "defaultValue":"10.0.0.0/16"
-      },
-      "staticSubnet":{
-         "type":"string",
-         "metadata":{
-            "description":"The address range of the subnet static IPs are allocated from in the new VNET"
-         },
-         "defaultValue":"10.0.0.0/24"
-      },
-      "adPDCNICIPAddress":{
-         "type":"string",
-         "metadata":{
-            "description":"The IP address of the new AD VM"
-         },
-         "defaultValue":"10.0.0.4"
-      },
-      "adBDCNICIPAddress":{
-         "type":"string",
-         "metadata":{
-            "description":"The IP address of the new AD VM"
-         },
-         "defaultValue":"10.0.0.5"
-      },
-	  "baseUrl":{
-         "type":"string",
-         "metadata":{
-            "description":"Base URL for Marketplace",
-            "artifactsBaseUrl":""
-         },
-         "defaultValue":"https://raw.githubusercontent.com/carrollh/azuretesting/master"
       }
-   },
-   "variables":{
-	  "location": "[resourceGroup().location]",
-	  "lbSettings":{
-         "rdpLBFE":"rdpLBFE",
-		 "adLBBE":"adLBBE",
-		 "rdpLBName":"rdpLoadBalancer"
-	  },
-      "subnetNames":{
-         "staticSubnetName":"staticSubnet"
-      },
-      "RDPNAT":"RDP",
-      "rdpIPAddressName":"rdpIP",
-	  "vmSettings": {
-		  "availabilitySets": {
-			"siosAvailabilitySetName":"siosAvailabilitySet",
-			"adAvailabilitySetName": "adAvailabilitySet"
-          },
-		  "vmContainerName": "vhds",
-		  "adPDCVMName": "ad-pdc",
-		  "adBDCVMName": "ad-bdc",
-		  "siosVMName":"sios-",
-		  "windowsImagePublisher": "MicrosoftWindowsServer",
-		  "windowsImageOffer": "WindowsServer",
-		  "windowsImageSKU": "2012-R2-Datacenter",
-		  "rdpPort": 3389,
-		  "windowsDiskSize": 128
-	  },
-      "virtualNetworkName":"datakeeperVNET",
-      "clusterName":"[concat(parameters('domainName'),'-fc')]",
-      "adPDCNicName":"[concat(variables('vmSettings').adPDCVMName,'-nic')]",
-      "adBDCNicName":"[concat(variables('vmSettings').adBDCVMName,'-nic')]",
-      "VnetID":"[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-      "staticSubnetRef":"[concat(variables('VnetID'),'/subnets/',variables('subnetNames').staticSubnetName)]",
-	  "ids":{
-         "adNicId":"[resourceId('Microsoft.Network/networkInterfaces',variables('adPDCNicName'))]",
-		 "rdplbID":"[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').rdpLBName)]"
-      },
-      "derivedIds":{
-        "adIPConfigID": "[concat(variables('ids').adNicId,'/ipConfigurations/ipconfig1')]",
-        "rdplbFEConfigID":"[concat(variables('ids').rdplbID,'/frontendIPConfigurations/',variables('lbSettings').rdpLBFE)]",
-		"adRDPNATRuleID":"[concat(variables('ids').rdplbID,'/inboundNatRules/',variables('RDPNAT'))]",
-		"adBEAddressPoolID":"[concat(variables('ids').rdplbID,'/backendAddressPools/',variables('lbSettings').adLBBE)]"
-      },
-      "subnets":[
-         {
-            "name":"[variables('subnetNames').staticSubnetName]",
-            "properties":{
-               "addressPrefix":"[parameters('staticSubnet')]"
-            }
-         }
-      ],
-      "configuration":{
-         "vnetwithDNSTemplateURL":"[concat(parameters('baseUrl'),'/vnet-with-dns-server.json')]",
-         "nicTemplateURL":"[concat(parameters('baseUrl'),'/nic.json')]",
-         "adPDCModulesURL":"[concat(parameters('baseURL'),'/dsc/CreateADPDC.ps1.zip')]",
-         "adPDCConfigurationFunction":"CreateADPDC.ps1\\CreateADPDC",
-         "adBDCModulesURL":"[concat(parameters('baseURL'),'/dsc/CreateADBDC.ps1.zip')]",
-         "adBDCConfigurationFunction":"CreateADBDC.ps1\\CreateADBDC",
-         "createClusterModulesURL":"[concat(parameters('baseURL'),'/dsc/CreateFailoverCluster.ps1.zip')]",
-         "createClusterConfigurationFunction":"CreateFailoverCluster.ps1\\CreateFailoverCluster",
-         "rdpIPAdressSetupURL":"[concat(parameters('baseUrl'),'/publicip-rdp.json')]",
-         "availabilitySetSetupURL":"[concat(parameters('baseUrl'),'/availabilitySets.json')]",
-         "provisioningPrimaryDCURL":"[concat(parameters('baseUrl'),'/provisioningPrimaryDomainController.json')]",
-         "provisioningBackupDCURL":"[concat(parameters('baseUrl'),'/provisioningBackupDomainController.json')]",
-         "creatingStorageAccounts":"[concat(parameters('baseUrl'),'/creatingStorageAccounts.json')]",
-		 "creatingSiosVMsURL":"[concat(parameters('baseUrl'),'/creatingSiosVMs.json')]",
-         "vnetSetupURL":"[concat(parameters('baseUrl'),'/vnet-new.json')]",
-         "creatingNicsUrl":"[concat(parameters('baseUrl'),'/creatingNICS.json')]"
-      }
-   },
+    ],
+    "configuration": {
+      "vnetwithDNSTemplateURL": "[concat(variables('baseUrl'),'/vnet-with-dns-server.json')]",
+      "nicTemplateURL": "[concat(variables('baseUrl'),'/nic.json')]",
+      "adPDCModulesURL": "[concat(variables('baseUrl'),'/dsc/CreateADPDC.ps1.zip')]",
+      "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
+      "adBDCModulesURL": "[concat(variables('baseUrl'),'/dsc/CreateADBDC.ps1.zip')]",
+      "adBDCConfigurationFunction": "CreateADBDC.ps1\\CreateADBDC",
+      "createClusterModulesURL": "[concat(variables('baseUrl'),'/dsc/CreateFailoverCluster.ps1.zip')]",
+      "createClusterConfigurationFunction": "CreateFailoverCluster.ps1\\CreateFailoverCluster",
+      "rdpIPAdressSetupURL": "[concat(variables('baseUrl'),'/publicip-rdp.json')]",
+      "availabilitySetSetupURL": "[concat(variables('baseUrl'),'/availabilitySets.json')]",
+      "provisioningPrimaryDCURL": "[concat(variables('baseUrl'),'/provisioningPrimaryDomainController.json')]",
+      "provisioningBackupDCURL": "[concat(variables('baseUrl'),'/provisioningBackupDomainController.json')]",
+      "creatingStorageAccounts": "[concat(variables('baseUrl'),'/creatingStorageAccounts.json')]",
+      "creatingSiosVMsURL": "[concat(variables('baseUrl'),'/creatingSiosVMs.json')]",
+      "vnetSetupURL": "[concat(variables('baseUrl'),'/vnet-new.json')]",
+      "creatingNicsUrl": "[concat(variables('baseUrl'),'/creatingNICS.json')]"
+    }
+  },
    "resources":[
       {
          "name":"CreatingStorageAccounts",
@@ -213,7 +112,7 @@
                   "value":"[parameters('storageAccountNamePrefix')]"
                },
                "storageAccountType":{
-                  "value":"[parameters('storageAccountType')]"
+                  "value":"[variables('storageAccountType')]"
                }
             }
          }
@@ -232,23 +131,14 @@
                "location":{
                   "value":"[variables('location')]"
                },
-               "rdpIPAddressName":{
-                  "value":"[variables('rdpIPAddressName')]"
+               "pdcRdpIPAddressName":{
+                  "value":"[variables('pdcRdpIPAddressName')]"
                },
-               "rdpLBName":{
-                  "value":"[variables('lbSettings').rdpLBName]"
+               "bdcRdpIPAddressName":{
+                  "value":"[variables('bdcRdpIPAddressName')]"
                },
-               "rdpLBFE":{
-                  "value":"[variables('lbSettings').rdpLBFE]"
-               },
-			   "adLBBE":{
-                  "value":"[variables('lbSettings').adLBBE]"
-               },
-               "RDPNAT":{
-                  "value":"[variables('RDPNAT')]"
-               },
-               "rdplbFEConfigID":{
-                  "value":"[variables('derivedIds').rdplbFEConfigID]"
+               "siosVMRdpIPAddressNamePrefix":{
+                  "value":"sios-"
                }
             }
          }
@@ -294,7 +184,7 @@
                   "value":"[variables('virtualNetworkName')]"
                },
                "virtualNetworkAddressRange":{
-                  "value":"[parameters('virtualNetworkAddressRange')]"
+                  "value":"[variables('virtualNetworkAddressRange')]"
                },
                "subnets":{
                   "value":"[variables('subnets')]"
@@ -324,22 +214,16 @@
                   "value":"[variables('adPDCNicName')]"
                },
                "adPDCNICIPAddress":{
-                  "value":"[parameters('adPDCNICIPAddress')]"
+                  "value":"[variables('adPDCNICIPAddress')]"
                },
                "staticSubnetRef":{
                   "value":"[variables('staticSubnetRef')]"
-               },
-			   "adBEAddressPoolID":{
-                  "value":"[variables('derivedIds').adBEAddressPoolID]"
-               },
-               "adRDPNATRuleID":{
-                  "value":"[variables('derivedIds').adRDPNATRuleID]"
                },
                "adBDCNicName":{
                   "value":"[variables('adBDCNicName')]"
                },
                "adBDCNICIPAddress":{
-                  "value":"[parameters('adBDCNICIPAddress')]"
+                  "value":"[variables('adBDCNICIPAddress')]"
                },
                "siosVMName":{
                   "value":"[variables('vmSettings').siosVMName]"
@@ -377,7 +261,7 @@
                   "value":"[reference('CreatingAvailabilitySets').outputs.adAvailabilitySetName.value]"
                },
                "adVMSize":{
-                  "value":"[parameters('adVMSize')]"
+                  "value":"[variables('adVMSize')]"
                },
                "adminUsername":{
                   "value":"[parameters('adminUsername')]"
@@ -401,7 +285,7 @@
                   "value":"[variables('adPDCNicName')]"
                },
                "domainName":{
-                  "value":"[parameters('domainName')]"
+                  "value":"[variables('domainName')]"
                },
                "adPDCConfigurationFunction":{
                   "value":"[variables('configuration').adPDCConfigurationFunction]"
@@ -433,14 +317,14 @@
                   "value":"[variables('virtualNetworkName')]"
                },
                "virtualNetworkAddressRange":{
-                  "value":"[parameters('virtualNetworkAddressRange')]"
+                  "value":"[variables('virtualNetworkAddressRange')]"
                },
                "subnets":{
                   "value":"[variables('subnets')]"
                },
                "DNSServerAddress":{
                   "value":[
-                     "[parameters('adPDCNICIPAddress')]"
+                     "[variables('adPDCNICIPAddress')]"
                   ]
                }
             }
@@ -476,7 +360,7 @@
                   "value":"[reference('CreatingAvailabilitySets').outputs.adAvailabilitySetName.value]"
                },
                "adVMSize":{
-                  "value":"[parameters('adVMSize')]"
+                  "value":"[variables('adVMSize')]"
                },
                "adminUsername":{
                   "value":"[parameters('adminUsername')]"
@@ -500,7 +384,7 @@
                   "value":"[variables('adBDCNicName')]"
                },
                "domainName":{
-                  "value":"[parameters('domainName')]"
+                  "value":"[variables('domainName')]"
                },
                "adBDCConfigurationFunction":{
                   "value":"[variables('configuration').adBDCConfigurationFunction]"
@@ -532,15 +416,15 @@
                   "value":"[variables('virtualNetworkName')]"
                },
                "virtualNetworkAddressRange":{
-                  "value":"[parameters('virtualNetworkAddressRange')]"
+                  "value":"[variables('virtualNetworkAddressRange')]"
                },
                "subnets":{
                   "value":"[variables('subnets')]"
                },
                "DNSServerAddress":{
                   "value":[
-                     "[parameters('adPDCNICIPAddress')]",
-                     "[parameters('adBDCNICIPAddress')]"
+                     "[variables('adPDCNICIPAddress')]",
+                     "[variables('adBDCNICIPAddress')]"
                   ]
                }
             }
@@ -576,7 +460,7 @@
                   "value":"[reference('CreatingAvailabilitySets').outputs.siosAvailabilitySetName.value]"
                },
                "siosVMSize":{
-                  "value":"[parameters('siosVMSize')]"
+                  "value":"[variables('siosVMSize')]"
                },
                "adminUsername":{
                   "value":"[parameters('adminUsername')]"
