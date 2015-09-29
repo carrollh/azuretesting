@@ -64,11 +64,11 @@
     },
     "siosVM0RdpPublicIP": {
       "type": "string",
-      "value": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('siosVMRdpIPAddressNamePrefix'), '0'))]"
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('siosVMRdpIPAddressNamePrefix'), '0RdpIP'))]"
     },
     "siosVM1RdpPublicIP": {
       "type": "string",
-      "value": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('siosVMRdpIPAddressNamePrefix'), '1'))]"
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('siosVMRdpIPAddressNamePrefix'), '1RdpIP'))]"
     }
   }
 }

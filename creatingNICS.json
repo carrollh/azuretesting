@@ -93,7 +93,7 @@
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "10.0.0.6",
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('siosVMRdpIPAddressNamePrefix'), '0'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('siosVMRdpIPAddressNamePrefix'), '0RdpIP'))]"
               },
               "subnet": {
                 "id": "[parameters('staticSubnetRef')]"
@@ -116,7 +116,7 @@
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "10.0.0.7",
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('siosVMRdpIPAddressNamePrefix'), '1'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('siosVMRdpIPAddressNamePrefix'), '1RdpIP'))]"
               },
               "subnet": {
                 "id": "[parameters('staticSubnetRef')]"
