@@ -93,7 +93,7 @@
     "properties": {
       "ipConfigurations": [
         {
-          "name": "ipconfig1",
+          "name": "[concat('ipconfig',copyIndex())]",
           "properties": {
             "privateIPAllocationMethod": "Dynamic",
             "subnet": {
