@@ -2,13 +2,6 @@
    "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
    "contentVersion":"1.0.0.0",
    "parameters":{
-      "location":{
-         "type":"string",
-		 "defaultValue": "West US",
-         "metadata":{
-            "description":"The region to deploy the resources into"
-         }
-      },
       "adminUsername":{
          "type":"string",
 		 "defaultValue": "siosadmin",
@@ -132,6 +125,7 @@
       }
    },
    "variables":{
+	  "location": "[resourceGroup().location]",
 	  "lbSettings":{
          "rdpLBFE":"rdpLBFE",
 		 "adLBBE":"adLBBE",
@@ -213,7 +207,7 @@
             },
             "parameters":{
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[variables('location')]"
                },
                "storageAccountNamePrefix":{
                   "value":"[parameters('storageAccountNamePrefix')]"
@@ -236,7 +230,7 @@
             },
             "parameters":{
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[variables('location')]"
                },
                "rdpIPAddressName":{
                   "value":"[variables('rdpIPAddressName')]"
@@ -271,7 +265,7 @@
             },
             "parameters":{
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[variables('location')]"
                },
                "adAvailabilitySetName":{
                   "value":"[variables('vmSettings').availabilitySets.adAvailabilitySetName]"
@@ -294,7 +288,7 @@
             },
             "parameters":{
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[variables('location')]"
                },
                "virtualNetworkName":{
                   "value":"[variables('virtualNetworkName')]"
@@ -324,7 +318,7 @@
             },
             "parameters":{
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[variables('location')]"
                },
                "adPDCNicName":{
                   "value":"[variables('adPDCNicName')]"
@@ -374,7 +368,7 @@
                   "value":"[variables('vmSettings').adPDCVMName]"
                },
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[variables('location')]"
                },
                "storageAccountNamePrefix":{
                   "value":"[parameters('storageAccountNamePrefix')]"
@@ -433,7 +427,7 @@
             },
             "parameters":{
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[variables('location')]"
                },
                "virtualNetworkName":{
                   "value":"[variables('virtualNetworkName')]"
@@ -473,7 +467,7 @@
                   "value":"[variables('vmSettings').adBDCVMName]"
                },
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[variables('location')]"
                },
                "storageAccountNamePrefix":{
                   "value":"[parameters('storageAccountNamePrefix')]"
@@ -532,7 +526,7 @@
             },
             "parameters":{
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[variables('location')]"
                },
                "virtualNetworkName":{
                   "value":"[variables('virtualNetworkName')]"
@@ -573,7 +567,7 @@
                   "value":"[variables('vmSettings').siosVMName]"
                },
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[variables('location')]"
                },
                "storageAccountNamePrefix":{
                   "value":"[parameters('storageAccountNamePrefix')]"

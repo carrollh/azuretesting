@@ -72,12 +72,12 @@
           "dataDisks": [
             {
               "vhd": {
-                "uri":"[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',parameters('vmContainerName'),'/', parameters('sqlVMName'), copyindex(), '-Data-1.vhd')]"
+                "uri":"[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',parameters('vmContainerName'),'/', parameters('siosVMName'), copyindex(), '-Data-1.vhd')]"
               },
-              "name":"[concat(parameters('sqlVMName'), copyindex(),'-data-disk1')]",
+              "name":"[concat(parameters('siosVMName'), copyindex(),'-data-disk1')]",
               "caching" : "None",
               "createOption": "empty",
-              "diskSizeGB": 100,
+              "diskSizeGB": "100",
               "lun": 0
             }
           ]
