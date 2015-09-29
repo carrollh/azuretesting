@@ -28,9 +28,6 @@
     },
     "siosVMName": {
       "type": "string"
-    },
-    "siosSubnetRef": {
-      "type": "string"
     }
   },
   "resources": [
@@ -100,7 +97,7 @@
           "properties": {
             "privateIPAllocationMethod": "Dynamic",
             "subnet": {
-              "id": "[parameters('siosSubnetRef')]"
+              "id": "[parameters('staticSubnetRef')]"
             }
           }
         }

@@ -108,13 +108,6 @@
          },
          "defaultValue":"10.0.0.0/24"
       },
-      "siosSubnet":{
-         "type":"string",
-         "metadata":{
-            "description":"The address range of the Sios subnet created in the new VNET"
-         },
-         "defaultValue":"10.0.1.0/24"
-      },
       "adPDCNICIPAddress":{
          "type":"string",
          "metadata":{
@@ -145,8 +138,7 @@
 		 "rdpLBName":"rdpLoadBalancer"
 	  },
       "subnetNames":{
-         "staticSubnetName":"staticSubnet",
-		 "siosSubnetName":"siosSubnet"
+         "staticSubnetName":"staticSubnet"
       },
       "RDPNAT":"RDP",
       "rdpIPAddressName":"rdpIP",
@@ -171,8 +163,7 @@
       "adBDCNicName":"[concat(variables('vmSettings').adBDCVMName,'-nic')]",
       "VnetID":"[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
       "staticSubnetRef":"[concat(variables('VnetID'),'/subnets/',variables('subnetNames').staticSubnetName)]",
-	  "siosSubnetRef":"[concat(variables('VnetID'),'/subnets/',variables('subnetNames').siosSubnetName)]",
-      "ids":{
+	  "ids":{
          "adNicId":"[resourceId('Microsoft.Network/networkInterfaces',variables('adPDCNicName'))]",
 		 "rdplbID":"[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').rdpLBName)]"
       },
@@ -187,12 +178,6 @@
             "name":"[variables('subnetNames').staticSubnetName]",
             "properties":{
                "addressPrefix":"[parameters('staticSubnet')]"
-            }
-         },
-         {
-            "name":"[variables('subnetNames').siosSubnetName]",
-            "properties":{
-               "addressPrefix":"[parameters('siosSubnet')]"
             }
          }
       ],
@@ -364,9 +349,6 @@
                },
                "siosVMName":{
                   "value":"[variables('vmSettings').siosVMName]"
-               },
-               "siosSubnetRef":{
-                  "value":"[variables('siosSubnetRef')]"
                }
             }
          }
